@@ -224,7 +224,7 @@ module wt_dcache_wbuffer
         req_port_i.address_tag,
         {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}
       },
-      chip_id_i, // Chip id
+      chip_id_i
   );
 
   assign miss_we_o = 1'b1;

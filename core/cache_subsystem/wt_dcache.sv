@@ -208,6 +208,7 @@ module wt_dcache
       assign rd_prio[k] = 1'b1;
       wt_dcache_ctrl #(
           .CVA6Cfg(CVA6Cfg),
+          .chip_id_t(chip_id_t),
           .DCACHE_CL_IDX_WIDTH(DCACHE_CL_IDX_WIDTH),
           .dcache_req_i_t(dcache_req_i_t),
           .dcache_req_o_t(dcache_req_o_t),
@@ -215,6 +216,7 @@ module wt_dcache
       ) i_wt_dcache_ctrl (
           .clk_i          (clk_i),
           .rst_ni         (rst_ni),
+          .chip_id_i      (chip_id_i),
           .cache_en_i     (cache_en),
           .busy_o         (ctrl_busy[k]),
           .stall_i        (stall_i),

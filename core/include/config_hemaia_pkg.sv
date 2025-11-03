@@ -443,7 +443,7 @@ package config_pkg;
   function automatic logic range_check(logic [63:0] base, logic [63:0] len, logic [63:0] address, chip_id_t chip_id);
     // if len is a power of two, and base is properly aligned, this check could be simplified
     // Extend base by one bit to prevent an overflow.
-    return ({chip_id,address[LocalAddressWidth-1:0]} >= {chip_id, base[LocalAddressWidth-1:0]}) && ({chip_id,address[LocalAddressWidth-1:0]} < {chip_id, (base[LocalAddressWidth-1:0] + len[LocalAddressWidth-1:0])}) && ((~(&address[LocalAddressWidth +: (ChipIdWidth/2)]))|(~(&address[(LocalAddressWidth+ChipIdWidth/2) +: (ChipIdWidth/2)])))
+    return ({chip_id,address[LocalAddressWidth-1:0]} >= {chip_id, base[LocalAddressWidth-1:0]}) && ({chip_id,address[LocalAddressWidth-1:0]} < {chip_id, (base[LocalAddressWidth-1:0] + len[LocalAddressWidth-1:0])}) && ((~(&address[LocalAddressWidth +: (ChipIdWidth/2)]))|(~(&address[(LocalAddressWidth+ChipIdWidth/2) +: (ChipIdWidth/2)])));
   endfunction : range_check
 
 
@@ -479,5 +479,195 @@ package config_pkg;
     end
     return |pass;
   endfunction : is_inside_cacheable_regions
+
+endpackage
+
+// The package defines here is purely for the dependency in the pkgs in the cva6 repo
+// The full configuration for hemaia is overridden in the occamy_cva6.sv
+package cva6_config_pkg;
+  localparam CVA6ConfigXlen = 64;
+
+  localparam CVA6ConfigNrCommitPorts = 2;
+  // We do not need the FPU in CVA6, the FPU is offloaded to the Ara
+  localparam CVA6ConfigRVF = 0;
+  localparam CVA6ConfigRVD = 0;
+  localparam CVA6ConfigF16En = 0;
+  localparam CVA6ConfigF16AltEn = 0;
+  localparam CVA6ConfigF8En = 0;
+  localparam CVA6ConfigF8AltEn = 0;
+  localparam CVA6ConfigFVecEn = 0;
+
+  localparam CVA6ConfigCvxifEn = 0;
+  localparam CVA6ConfigCExtEn = 1;    // Compress Ext
+  localparam CVA6ConfigZcbExtEn = 0;
+  localparam CVA6ConfigZcmpExtEn = 0;
+  localparam CVA6ConfigAExtEn = 1;    // Atomic Ext
+  localparam CVA6ConfigBExtEn = 0;
+  localparam CVA6ConfigHExtEn = 0;
+  localparam CVA6ConfigVExtEn = 1;    // Vector Ext
+  localparam CVA6ConfigRVZiCond = 0;
+  localparam CVA6ConfigSclicExtEn = 0;
+  localparam CVA6ConfigXhclicExtEn = 0;
+
+  localparam CVA6ConfigAxiIdWidth   = 3;
+  localparam CVA6ConfigAxiAddrWidth = 48;
+  localparam CVA6ConfigAxiDataWidth = 64;
+  localparam CVA6ConfigFetchUserEn  = 0;
+  localparam CVA6ConfigFetchUserWidth = 1;  // Just not to raise warnings
+  localparam CVA6ConfigDataUserEn = 0;
+  localparam CVA6ConfigDataUserWidth = 1;
+
+  localparam CVA6ConfigIcacheByteSize = 4096;
+  localparam CVA6ConfigIcacheSetAssoc = 4;
+  localparam CVA6ConfigIcacheLineWidth = 128;
+  localparam CVA6ConfigDcacheByteSize = 8192;
+  localparam CVA6ConfigDcacheSetAssoc = 4;
+  localparam CVA6ConfigDcacheLineWidth = 256;
+
+  localparam CVA6ConfigDcacheFlushOnFence = 1'b0;
+  localparam CVA6ConfigDcacheInvalidateOnFlush = 1'b0;
+
+  localparam CVA6ConfigDcacheIdWidth = 1;
+  localparam CVA6ConfigMemTidWidth = 2;
+
+  localparam CVA6ConfigWtDcacheWbufDepth = 8;
+
+  localparam CVA6ConfigNrScoreboardEntries = 8;
+
+  localparam CVA6ConfigNrLoadPipeRegs = 1;
+  localparam CVA6ConfigNrStorePipeRegs = 0;
+  localparam CVA6ConfigNrLoadBufEntries = 2;
+
+  localparam CVA6ConfigRASDepth = 2;
+  localparam CVA6ConfigBTBEntries = 32;
+  localparam CVA6ConfigBHTEntries = 128;
+
+  localparam CVA6ConfigTvalEn = 1;
+
+  localparam CVA6ConfigNrPMPEntries = 8;
+
+  localparam CVA6ConfigPerfCounterEn = 0;
+
+  localparam config_pkg::cache_type_t CVA6ConfigDcacheType = config_pkg::HPDCACHE_WT;
+
+  localparam CVA6ConfigMmuPresent = 0;
+
+  localparam CVA6ConfigRvfiTrace = 1;
+
+  // Memory regions
+  localparam logic [63:0] WideSPMBase           =   64'h8000_0000;
+  localparam logic [63:0] WideSPMLength         =   64'h100_0000;
+  localparam logic [63:0] NarrowSPMBase         =   64'h7000_0000;
+  localparam logic [63:0] NarrowSPMLength       =   64'h8000;
+  localparam logic [63:0] BootromBase           =   64'h100_0000;
+  localparam logic [63:0] BootromLength         =   64'h2_0000;
+  localparam logic [63:0] DebugBase             =   64'd0;
+  localparam logic [63:0] DebugLength           =   64'd4096;
+  // MMIO regions
+  localparam logic [63:0] SoCPeriphBase         =   64'd0;
+  localparam logic [63:0] SoCPeriphLength       =   64'h1000_0000;
+  localparam logic [63:0] ClusterBase           =   64'h1000_0000;
+  localparam logic [63:0] ClusterLength         =   64'h100_0000;
+  localparam config_pkg::cva6_user_cfg_t cva6_cfg = '{
+      XLEN: unsigned'(CVA6ConfigXlen),
+      VLEN: unsigned'(64),
+      FpgaEn: bit'(0),  // for Xilinx and Altera
+      FpgaAlteraEn: bit'(0),  // for Altera (only)
+      TechnoCut: bit'(0),
+      SuperscalarEn: bit'(0),
+      NrCommitPorts: unsigned'(CVA6ConfigNrCommitPorts),
+      AxiAddrWidth: unsigned'(CVA6ConfigAxiAddrWidth),
+      AxiDataWidth: unsigned'(CVA6ConfigAxiDataWidth),
+      AxiIdWidth: unsigned'(CVA6ConfigAxiIdWidth),
+      AxiUserWidth: unsigned'(CVA6ConfigDataUserWidth),
+      MemTidWidth: unsigned'(CVA6ConfigMemTidWidth),
+      NrLoadBufEntries: unsigned'(CVA6ConfigNrLoadBufEntries),
+      RVF: bit'(CVA6ConfigRVF),
+      RVD: bit'(CVA6ConfigRVD),
+      XF16: bit'(CVA6ConfigF16En),
+      XF16ALT: bit'(CVA6ConfigF16AltEn),
+      XF8: bit'(CVA6ConfigF8En),
+      XF8ALT: bit'(CVA6ConfigF8AltEn),
+      RVA: bit'(CVA6ConfigAExtEn),
+      RVB: bit'(CVA6ConfigBExtEn),
+      ZKN: bit'(0),
+      RVV: bit'(CVA6ConfigVExtEn),
+      RVC: bit'(CVA6ConfigCExtEn),
+      RVH: bit'(CVA6ConfigHExtEn),
+      RVZCB: bit'(CVA6ConfigZcbExtEn),
+      RVZCMP: bit'(CVA6ConfigZcmpExtEn),
+      RVZCMT: bit'(0),
+      XFVec: bit'(CVA6ConfigFVecEn),
+      CvxifEn: bit'(CVA6ConfigCvxifEn),
+      CoproType: config_pkg::COPRO_NONE,
+      RVZiCond: bit'(CVA6ConfigRVZiCond),
+      RVSCLIC: bit'(CVA6ConfigSclicExtEn),
+      RVXHCLIC: bit'(CVA6ConfigXhclicExtEn),
+      RVZicntr: bit'(1),
+      RVZihpm: bit'(1),
+      NrScoreboardEntries: unsigned'(CVA6ConfigNrScoreboardEntries),
+      PerfCounterEn: bit'(CVA6ConfigPerfCounterEn),
+      MmuPresent: bit'(CVA6ConfigMmuPresent),
+      RVS: bit'(1),
+      RVU: bit'(1),
+      SoftwareInterruptEn: bit'(1),
+      HaltAddress: 64'h800,
+      ExceptionAddress: 64'h808,
+      RASDepth: unsigned'(CVA6ConfigRASDepth),
+      BTBEntries: unsigned'(CVA6ConfigBTBEntries),
+      BPType: config_pkg::BHT,
+      BHTEntries: unsigned'(CVA6ConfigBHTEntries),
+      BHTHist: unsigned'(3),
+      DmBaseAddress: 64'h0,
+      TvalEn: bit'(CVA6ConfigTvalEn),
+      DirectVecOnly: bit'(0),
+      NrPMPEntries: unsigned'(CVA6ConfigNrPMPEntries),
+      PMPCfgRstVal: {64{64'h0}},
+      PMPAddrRstVal: {64{64'h0}},
+      PMPEntryReadOnly: 64'd0,
+      PMPNapotEn: bit'(1),
+      NOCType: config_pkg::NOC_TYPE_AXI4_ATOP,
+      CLICNumInterruptSrc: unsigned'(256),
+      // Memory Regions
+      //    NonIdemp Region
+      NrNonIdempotentRules: unsigned'(2),
+      //                            SoC Periph;        Cluster
+      NonIdempotentAddrBase: 1024'({SoCPeriphBase,    ClusterBase  }),
+      NonIdempotentLength:   1024'({SoCPeriphLength,  ClusterLength}),
+      //    Exe Region
+      NrExecuteRegionRules: unsigned'(4),
+      //                             WideSPM;       NarrowSPM;    Boot ROM;        Debug Module
+      ExecuteRegionAddrBase: 1024'({WideSPMBase,   NarrowSPMBase, BootromBase,    DebugBase  }),
+      ExecuteRegionLength:   1024'({WideSPMLength, NarrowSPMBase, BootromLength,  DebugLength}),
+      //    Cache Region
+      NrCachedRegionRules: unsigned'(2),
+      //                             WideSPM;       NarrowSPM
+      CachedRegionAddrBase:  1024'({WideSPMBase,   NarrowSPMBase  }),
+      CachedRegionLength:    1024'({WideSPMLength, NarrowSPMLength}),
+      MaxOutstandingStores: unsigned'(7),
+      DebugEn: bit'(1),
+      AxiBurstWriteEn: bit'(0),
+      IcacheByteSize: unsigned'(CVA6ConfigIcacheByteSize),
+      IcacheSetAssoc: unsigned'(CVA6ConfigIcacheSetAssoc),
+      IcacheLineWidth: unsigned'(CVA6ConfigIcacheLineWidth),
+      DcacheByteSize: unsigned'(CVA6ConfigDcacheByteSize),
+      DcacheSetAssoc: unsigned'(CVA6ConfigDcacheSetAssoc),
+      DcacheLineWidth: unsigned'(CVA6ConfigDcacheLineWidth),
+      DcacheFlushOnFence: unsigned'(CVA6ConfigDcacheFlushOnFence),
+      DcacheInvalidateOnFlush: unsigned'(CVA6ConfigDcacheInvalidateOnFlush),
+      DataUserEn: unsigned'(CVA6ConfigDataUserEn),
+      WtDcacheWbufDepth: int'(CVA6ConfigWtDcacheWbufDepth),
+      FetchUserWidth: unsigned'(CVA6ConfigFetchUserWidth),
+      FetchUserEn: unsigned'(CVA6ConfigFetchUserEn),
+      DCacheType: CVA6ConfigDcacheType,
+      InstrTlbEntries: int'(16),
+      DataTlbEntries: int'(16),
+      UseSharedTlb: bit'(0),
+      SharedTlbDepth: int'(64),
+      NrLoadPipeRegs: int'(CVA6ConfigNrLoadPipeRegs),
+      NrStorePipeRegs: int'(CVA6ConfigNrStorePipeRegs),
+      DcacheIdWidth: int'(CVA6ConfigDcacheIdWidth)
+  };
+
 
 endpackage

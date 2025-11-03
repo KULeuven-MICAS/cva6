@@ -18,6 +18,7 @@ module wt_dcache_ctrl
   import wt_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter DCACHE_CL_IDX_WIDTH = 0,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
@@ -25,6 +26,7 @@ module wt_dcache_ctrl
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni,  // Asynchronous reset active low
+    input chip_id_t chip_id_i,
     input logic cache_en_i,
     output logic busy_o,
     input logic stall_i,  // stall new memory requests

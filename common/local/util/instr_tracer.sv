@@ -257,7 +257,7 @@ module instr_tracer #(
 
   initial begin
     #15ns;
-    create_file(hart_id_i);
+    create_file(hart_id_i, chip_id_i);
     trace();
   end
 

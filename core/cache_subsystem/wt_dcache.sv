@@ -18,6 +18,7 @@ module wt_dcache
   import wt_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
     parameter type dcache_req_t = logic,
@@ -29,7 +30,7 @@ module wt_dcache
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni, // Asynchronous reset active low
-
+    input chip_id_t chip_id_i,
     // Cache management
     input logic enable_i,  // from CSR
     input logic flush_i,  // high until acknowledged
@@ -276,6 +277,7 @@ module wt_dcache
 
   wt_dcache_wbuffer #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .DCACHE_CL_IDX_WIDTH(DCACHE_CL_IDX_WIDTH),
       .dcache_req_i_t(dcache_req_i_t),
       .dcache_req_o_t(dcache_req_o_t),
@@ -283,6 +285,7 @@ module wt_dcache
   ) i_wt_dcache_wbuffer (
       .clk_i          (clk_i),
       .rst_ni         (rst_ni),
+      .chip_id_i      (chip_id_i),
       .empty_o        (wbuffer_empty_o),
       .not_ni_o       (wbuffer_not_ni_o),
       // TODO: fix this

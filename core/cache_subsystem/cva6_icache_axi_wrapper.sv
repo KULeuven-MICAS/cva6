@@ -18,6 +18,7 @@ module cva6_icache_axi_wrapper
   import wt_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter type icache_areq_t = logic,
     parameter type icache_arsp_t = logic,
     parameter type icache_dreq_t = logic,
@@ -29,6 +30,9 @@ module cva6_icache_axi_wrapper
 ) (
     input logic             clk_i,
     input logic             rst_ni,
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
+
     input riscv::priv_lvl_t priv_lvl_i,
 
     input logic flush_i,  // flush the icache, flush and kill have to be asserted together
@@ -111,6 +115,7 @@ module cva6_icache_axi_wrapper
   cva6_icache #(
       // use ID 0 for icache reads
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .icache_areq_t(icache_areq_t),
       .icache_arsp_t(icache_arsp_t),
       .icache_dreq_t(icache_dreq_t),
@@ -121,6 +126,7 @@ module cva6_icache_axi_wrapper
   ) i_cva6_icache (
       .clk_i         (clk_i),
       .rst_ni        (rst_ni),
+      .chip_id_i     (chip_id_i),
       .flush_i       (flush_i),
       .en_i          (en_i),
       .miss_o        (miss_o),

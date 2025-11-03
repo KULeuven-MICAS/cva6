@@ -22,6 +22,7 @@ module load_unit
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
     parameter type exception_t = logic,
@@ -31,6 +32,8 @@ module load_unit
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
     // Flush signal - CONTROLLER
     input logic flush_i,
     // Load request is valid - LSU_BYPASS
@@ -222,7 +225,7 @@ module load_unit
   logic inflight_stores;
   logic stall_ni;
   assign paddr_ni = config_pkg::is_inside_nonidempotent_regions(
-      CVA6Cfg, {{52 - CVA6Cfg.PPNW{1'b0}}, dtlb_ppn_i, 12'd0}
+      CVA6Cfg, {{52 - CVA6Cfg.PPNW{1'b0}}, dtlb_ppn_i, 12'd0}, chip_id_i
   );
   assign not_commit_time = commit_tran_id_i != lsu_ctrl_i.trans_id;
   assign inflight_stores = (!dcache_wbuffer_not_ni_i || !store_buffer_empty_i);

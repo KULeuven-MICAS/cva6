@@ -10,11 +10,13 @@ module pmp_data_if
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg       = config_pkg::cva6_cfg_empty,
+    parameter type                   chip_id_t     = logic,
     parameter type                   icache_areq_t = logic,
     parameter type                   exception_t   = logic
 ) (
     input logic clk_i,
     input logic rst_ni,
+    input chip_id_t chip_id_i,
     // IF interface
     input icache_areq_t icache_areq_i,
     output icache_areq_t icache_areq_o,
@@ -66,7 +68,7 @@ module pmp_data_if
 
   // check for execute flag on memory
   assign match_any_execute_region = config_pkg::is_inside_execute_regions(
-      CVA6Cfg, {{64 - CVA6Cfg.PLEN{1'b0}}, icache_areq_i.fetch_paddr}
+      CVA6Cfg, {{64 - CVA6Cfg.PLEN{1'b0}}, icache_areq_i.fetch_paddr}, chip_id_i
   );
 
   // As the PMP check is combinatorial, pass the icache_areq directly if no

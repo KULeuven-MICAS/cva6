@@ -20,6 +20,7 @@ module std_cache_subsystem
   import std_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type                   chip_id_t      = logic,
     parameter type icache_areq_t = logic,
     parameter type icache_arsp_t = logic,
     parameter type icache_dreq_t = logic,
@@ -37,6 +38,8 @@ module std_cache_subsystem
 ) (
     input logic clk_i,
     input logic rst_ni,
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
     input riscv::priv_lvl_t priv_lvl_i,
     output logic busy_o,
     input logic stall_i,  // stall new memory requests
@@ -85,6 +88,7 @@ module std_cache_subsystem
 
   cva6_icache_axi_wrapper #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .icache_areq_t(icache_areq_t),
       .icache_arsp_t(icache_arsp_t),
       .icache_dreq_t(icache_dreq_t),
@@ -96,6 +100,7 @@ module std_cache_subsystem
   ) i_cva6_icache_axi_wrapper (
       .clk_i     (clk_i),
       .rst_ni    (rst_ni),
+      .chip_id_i (chip_id_i),
       .priv_lvl_i(priv_lvl_i),
       .flush_i   (icache_flush_i),
       .en_i      (icache_en_i),
@@ -118,6 +123,7 @@ module std_cache_subsystem
   // Port 3: Store Unit
   std_nbdcache #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .dcache_req_i_t(dcache_req_i_t),
       .dcache_req_o_t(dcache_req_o_t),
       .NumPorts(NumPorts),
@@ -126,6 +132,7 @@ module std_cache_subsystem
   ) i_nbdcache (
       .clk_i,
       .rst_ni,
+      .chip_id_i   (chip_id_i),
       .enable_i    (dcache_enable_i),
       .flush_i     (dcache_flush_i),
       .flush_ack_o (dcache_flush_ack_o),

@@ -18,6 +18,7 @@ module ex_stage
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t    = logic,
     parameter type bp_resolve_t = logic,
     parameter type branchpredict_sbe_t = logic,
     parameter type dcache_req_i_t = logic,
@@ -37,6 +38,8 @@ module ex_stage
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
+    // Chip id
+    input chip_id_t chip_id_i,
     // Fetch flush request - CONTROLLER
     input logic flush_i,
     // Debug mode is enabled - CSR_REGFILE
@@ -532,6 +535,7 @@ module ex_stage
 
   load_store_unit #(
       .CVA6Cfg   (CVA6Cfg),
+      .chip_id_t (chip_id_t),
       .dcache_req_i_t(dcache_req_i_t),
       .dcache_req_o_t(dcache_req_o_t),
       .exception_t(exception_t),
@@ -546,6 +550,7 @@ module ex_stage
   ) lsu_i (
       .clk_i,
       .rst_ni,
+      .chip_id_i,
       .flush_i,
       .stall_st_pending_i,
       .no_st_pending_o,

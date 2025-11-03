@@ -107,7 +107,8 @@ module wt_dcache_ctrl
   // noncacheable if request goes to I/O space, or if cache is disabled
   assign miss_nc_o = (~cache_en_i) | (~config_pkg::is_inside_cacheable_regions(
       CVA6Cfg,
-      {{{64-CVA6Cfg.DCACHE_TAG_WIDTH-CVA6Cfg.DCACHE_INDEX_WIDTH}{1'b0}}, address_tag_q, {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}}
+      {{{64-CVA6Cfg.DCACHE_TAG_WIDTH-CVA6Cfg.DCACHE_INDEX_WIDTH}{1'b0}}, address_tag_q, {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}},
+      chip_id_i
   ));
 
 

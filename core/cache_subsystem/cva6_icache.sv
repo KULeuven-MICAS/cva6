@@ -30,6 +30,7 @@ module cva6_icache
   import wt_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t     = logic,
     parameter type icache_areq_t = logic,
     parameter type icache_arsp_t = logic,
     parameter type icache_dreq_t = logic,
@@ -41,7 +42,8 @@ module cva6_icache
 ) (
     input logic clk_i,
     input logic rst_ni,
-
+    /// Chip id 
+    input chip_id_t      chip_id_i,
     /// flush the icache, flush and kill have to be asserted together
     input  logic         flush_i,
     /// enable icache
@@ -143,7 +145,7 @@ module cva6_icache
 
   // noncacheable if request goes to I/O space, or if cache is disabled
   assign paddr_is_nc = (~cache_en_q) | (~config_pkg::is_inside_cacheable_regions(
-      CVA6Cfg, {{64 - CVA6Cfg.PLEN{1'b0}}, cl_tag_d, {CVA6Cfg.ICACHE_INDEX_WIDTH{1'b0}}}
+      CVA6Cfg, {{64 - CVA6Cfg.PLEN{1'b0}}, cl_tag_d, {CVA6Cfg.ICACHE_INDEX_WIDTH{1'b0}}}, chip_id_i
   ));
 
   // pass exception through
@@ -192,7 +194,7 @@ module cva6_icache
   ///////////////////////////////////////////////////////
   logic addr_ni;
   assign addr_ni = config_pkg::is_inside_nonidempotent_regions(
-      CVA6Cfg, {{64 - CVA6Cfg.PLEN{1'b0}}, areq_i.fetch_paddr}
+      CVA6Cfg, {{64 - CVA6Cfg.PLEN{1'b0}}, areq_i.fetch_paddr}, chip_id_i
   );
   always_comb begin : p_fsm
     // default assignment

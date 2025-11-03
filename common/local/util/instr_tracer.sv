@@ -50,7 +50,7 @@ module instr_tracer #(
   input exception_t                                    commit_exception,
   input riscv::priv_lvl_t                              priv_lvl, // current privilege level
   input logic                                          debug_mode,
-
+  input logic [7:0]                                    chip_id_i,
   input logic[CVA6Cfg.XLEN-1:0]                        hart_id_i
 );
 
@@ -74,11 +74,12 @@ module instr_tracer #(
 
   // static uvm_cmdline_processor uvcl = uvm_cmdline_processor::get_inst();
 
-  function void create_file(logic [63:0] hart_id);
+  function void create_file(logic [63:0] hart_id, logic [7:0] chip_id);
     string fn, fn_commit_log;
-    $sformat(fn, "trace_hart_%0.0f.log", hart_id);
-    $sformat(fn_commit_log, "trace_hart_%0.0f_commit.log", hart_id);
-    $display("[TRACER] Output filename is: %s", fn);
+    $sformat(fn, "logs/trace_chip_%01x%01x_hart_%05x.log", chip_id[7:4], chip_id[3:0], hart_id);
+    $sformat(fn_commit_log, "logs/trace_chip_%01x%01x_hart_%05x_commit.log", chip_id[7:4],
+             chip_id[3:0], hart_id);
+    $display("[Tracer] Logging Hart %d to %s", hart_id, fn);
 
     f = $fopen(fn,"w");
     if (ariane_pkg::ENABLE_SPIKE_COMMIT_LOG) commit_log = $fopen(fn_commit_log, "w");

@@ -18,6 +18,7 @@ module std_nbdcache
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t    = logic,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
     parameter int unsigned NumPorts = 4,
@@ -26,6 +27,8 @@ module std_nbdcache
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni,  // Asynchronous reset active low
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
     // Cache management
     input logic enable_i,  // from CSR
     input logic flush_i,  // high until acknowledged
@@ -124,11 +127,13 @@ module std_nbdcache
     for (genvar i = 0; i < NumPorts; i++) begin : master_ports
       cache_ctrl #(
           .CVA6Cfg(CVA6Cfg),
+          .chip_id_t(chip_id_t),
           .cache_line_t(cache_line_t),
           .cl_be_t(cl_be_t),
           .dcache_req_i_t(dcache_req_i_t),
           .dcache_req_o_t(dcache_req_o_t)
       ) i_cache_ctrl (
+          .chip_id_i (chip_id_i),
           .bypass_i  (~enable_i),
           .busy_o    (busy[i]),
           .stall_i   (stall_i | flush_i),

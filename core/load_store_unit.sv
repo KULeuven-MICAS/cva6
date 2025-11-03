@@ -17,6 +17,7 @@ module load_store_unit
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
     parameter type exception_t = logic,
@@ -33,6 +34,8 @@ module load_store_unit
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
+    // Chip id
+    input chip_id_t chip_id_i,
     // TO_BE_COMPLETED - TO_BE_COMPLETED
     input logic flush_i,
     // TO_BE_COMPLETED - TO_BE_COMPLETED
@@ -369,11 +372,13 @@ module load_store_unit
 
   pmp_data_if #(
       .CVA6Cfg      (CVA6Cfg),
+      .chip_id_t    (chip_id_t),
       .icache_areq_t(icache_areq_t),
       .exception_t  (exception_t)
   ) i_pmp_data_if (
       .clk_i               (clk_i),
       .rst_ni              (rst_ni),
+      .chip_id_i           (chip_id_i),
       .icache_areq_i       (pmp_icache_areq_i),
       .icache_areq_o       (icache_areq_o),
       .icache_fetch_vaddr_i(icache_areq_i.fetch_vaddr),
@@ -551,6 +556,7 @@ module load_store_unit
   // ------------------
   load_unit #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .dcache_req_i_t(dcache_req_i_t),
       .dcache_req_o_t(dcache_req_o_t),
       .exception_t(exception_t),
@@ -558,11 +564,11 @@ module load_store_unit
   ) i_load_unit (
       .clk_i,
       .rst_ni,
+      .chip_id_i,
       .flush_i,
       .valid_i   (ld_valid_i),
       .lsu_ctrl_i(lsu_ctrl),
       .pop_ld_o  (pop_ld),
-
       .valid_o              (ld_valid),
       .trans_id_o           (ld_trans_id),
       .result_o             (ld_result),

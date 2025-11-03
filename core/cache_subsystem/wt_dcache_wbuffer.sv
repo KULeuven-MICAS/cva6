@@ -54,6 +54,7 @@ module wt_dcache_wbuffer
   import wt_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter DCACHE_CL_IDX_WIDTH = 0,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
@@ -61,7 +62,7 @@ module wt_dcache_wbuffer
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni, // Asynchronous reset active low
-
+    input chip_id_t chip_id_i, // Chip id
     input logic cache_en_i,  // writes are treated as NC if disabled
     output logic empty_o,  // asserted if no data is present in write buffer
     output logic not_ni_o,  // asserted if no ni data is present in write buffer
@@ -211,7 +212,8 @@ module wt_dcache_wbuffer
         {64 - CVA6Cfg.DCACHE_TAG_WIDTH - CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}},
         miss_tag,
         {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}
-      }
+      },
+      chip_id_i // Chip id
   );
   assign miss_nc_o = !cache_en_i || is_nc_miss;
   // Non-idempotent if request goes to NI region
@@ -221,7 +223,8 @@ module wt_dcache_wbuffer
         {64 - CVA6Cfg.DCACHE_TAG_WIDTH - CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}},
         req_port_i.address_tag,
         {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}
-      }
+      },
+      chip_id_i, // Chip id
   );
 
   assign miss_we_o = 1'b1;

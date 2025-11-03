@@ -17,6 +17,7 @@ module cva6_hpdcache_subsystem
 //  {{{
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t      = logic,
     parameter type icache_areq_t = logic,
     parameter type icache_arsp_t = logic,
     parameter type icache_dreq_t = logic,
@@ -48,7 +49,8 @@ module cva6_hpdcache_subsystem
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
-
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
     //  AXI port to upstream memory/peripherals
     //  {{{
     // noc request, can be AXI or OpenPiton - SUBSYSTEM
@@ -149,6 +151,7 @@ module cva6_hpdcache_subsystem
 
   cva6_icache #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .icache_areq_t(icache_areq_t),
       .icache_arsp_t(icache_arsp_t),
       .icache_dreq_t(icache_dreq_t),
@@ -159,6 +162,7 @@ module cva6_hpdcache_subsystem
   ) i_cva6_icache (
       .clk_i         (clk_i),
       .rst_ni        (rst_ni),
+      .chip_id_i     (chip_id_i),
       .flush_i       (icache_flush_i),
       .en_i          (icache_en_i),
       .miss_o        (icache_miss_o),

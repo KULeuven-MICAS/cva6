@@ -24,6 +24,7 @@ module wt_cache_subsystem
   import wt_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg        = config_pkg::cva6_cfg_empty,
+    parameter type                   chip_id_t      = logic,
     parameter type                   icache_areq_t  = logic,
     parameter type                   icache_arsp_t  = logic,
     parameter type                   icache_dreq_t  = logic,
@@ -38,6 +39,8 @@ module wt_cache_subsystem
 ) (
     input logic clk_i,
     input logic rst_ni,
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
     output logic busy_o,
     input logic stall_i,  // stall new memory requests
     input logic init_ni,
@@ -157,6 +160,7 @@ module wt_cache_subsystem
   // Port 2 is write only and goes into the merging write buffer
   wt_dcache #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .dcache_req_i_t(dcache_req_i_t),
       .dcache_req_o_t(dcache_req_o_t),
       .dcache_req_t(dcache_req_t),
@@ -167,6 +171,7 @@ module wt_cache_subsystem
   ) i_wt_dcache (
       .clk_i           (clk_i),
       .rst_ni          (rst_ni),
+      .chip_id_i       (chip_id_i),
       .enable_i        (dcache_enable_i),
       .busy_o          (dcache_busy),
       .stall_i         (stall_i),

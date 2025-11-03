@@ -22,7 +22,8 @@ module cva6
     parameter config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(
         cva6_config_pkg::cva6_cfg
     ),
-
+    // Chip id
+    parameter type chip_id_t    = logic,
     // RVFI PROBES
     parameter type rvfi_probes_instr_t = `RVFI_PROBES_INSTR_T(CVA6Cfg),
     parameter type rvfi_probes_csr_t = `RVFI_PROBES_CSR_T(CVA6Cfg),
@@ -316,6 +317,8 @@ module cva6
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
+    // Chip id - SUBSYSTEM
+    input chip_id_t chip_id_i,
     // Reset boot address - SUBSYSTEM
     input logic [CVA6Cfg.VLEN-1:0] boot_addr_i,
     // Hard ID reflected as CSR - SUBSYSTEM
@@ -976,6 +979,7 @@ module cva6
   // ---------
   ex_stage #(
       .CVA6Cfg   (CVA6Cfg),
+      .chip_id_t (chip_id_t),
       .bp_resolve_t(bp_resolve_t),
       .branchpredict_sbe_t(branchpredict_sbe_t),
       .dcache_req_i_t(dcache_req_i_t),
@@ -993,6 +997,7 @@ module cva6
   ) ex_stage_i (
       .clk_i(clk_i),
       .rst_ni(rst_uarch_n),
+      .chip_id_i(chip_id_i),
       .debug_mode_i(debug_mode),
       .flush_i(flush_ctrl_ex),
       .rs1_forwarding_i(rs1_forwarding_id_ex),
@@ -1420,6 +1425,7 @@ module cva6
     // this is a cache subsystem that is compatible with OpenPiton
     wt_cache_subsystem #(
         .CVA6Cfg   (CVA6Cfg),
+        .chip_id_t (chip_id_t),
         .icache_areq_t(icache_areq_t),
         .icache_arsp_t(icache_arsp_t),
         .icache_dreq_t(icache_dreq_t),
@@ -1435,6 +1441,7 @@ module cva6
         // to D$
         .clk_i             (clk_i),
         .rst_ni            (rst_uarch_n),
+        .chip_id_i         (chip_id_i),
         .busy_o            (busy_cache_ctrl),
         .stall_i           (stall_ctrl_cache),
         .init_ni           (init_ctrl_cache_n),
@@ -1476,6 +1483,7 @@ module cva6
   begin : gen_cache_hpd
     cva6_hpdcache_subsystem #(
         .CVA6Cfg   (CVA6Cfg),
+        .chip_id_t (chip_id_t),
         .icache_areq_t(icache_areq_t),
         .icache_arsp_t(icache_arsp_t),
         .icache_dreq_t(icache_dreq_t),
@@ -1497,7 +1505,7 @@ module cva6
     ) i_cache_subsystem (
         .clk_i (clk_i),
         .rst_ni(rst_ni),
-
+        .chip_id_i(chip_id_i),
         .icache_en_i   (icache_en_csr),
         .icache_flush_i(icache_flush_ctrl_cache),
         .icache_miss_o (icache_miss_cache_perf),
@@ -1544,6 +1552,7 @@ module cva6
         // not as important since this cache subsystem is about to be
         // deprecated
         .CVA6Cfg       (CVA6Cfg),
+        .chip_id_t     (chip_id_t),
         .icache_areq_t (icache_areq_t),
         .icache_arsp_t (icache_arsp_t),
         .icache_dreq_t (icache_dreq_t),
@@ -1562,6 +1571,7 @@ module cva6
         // to D$
         .clk_i             (clk_i),
         .rst_ni            (rst_uarch_n),
+        .chip_id_i         (chip_id_i),
         .priv_lvl_i        (priv_lvl),
         .busy_o            (busy_cache_ctrl),
         .stall_i           (stall_ctrl_cache),
@@ -1832,6 +1842,7 @@ module cva6
       .commit_exception(commit_stage_i.exception_o),
       .priv_lvl(priv_lvl),
       .debug_mode(debug_mode),
+      .chip_id_i(chip_id_i),
       .hart_id_i(hart_id_i)
   );
 

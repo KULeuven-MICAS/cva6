@@ -23,6 +23,7 @@ module cache_ctrl
   import std_cache_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t    = logic,
     parameter type cache_line_t = logic,
     parameter type cl_be_t = logic,
     parameter type dcache_req_i_t = logic,
@@ -30,6 +31,7 @@ module cache_ctrl
 ) (
     input logic clk_i,  // Clock
     input logic rst_ni,  // Asynchronous reset active low
+    input chip_id_t chip_id_i,
     input logic bypass_i,  // enable cache
     output logic busy_o,
     input logic stall_i,  // stall new memory requests
@@ -261,7 +263,7 @@ module cache_ctrl
           // Check for cache-ability
           // -------------------------
           if (!config_pkg::is_inside_cacheable_regions(
-                  CVA6Cfg, {{{64 - CVA6Cfg.PLEN} {1'b0}}, tag_o, {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}}
+                  CVA6Cfg, {{{64 - CVA6Cfg.PLEN} {1'b0}}, tag_o, {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}}, chip_id_i
               )) begin
             mem_req_d.bypass = 1'b1;
             state_d = WAIT_REFILL_GNT;

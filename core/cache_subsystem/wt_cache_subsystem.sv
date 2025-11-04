@@ -126,6 +126,7 @@ module wt_cache_subsystem
   cva6_icache #(
       // use ID 0 for icache reads
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .icache_areq_t(icache_areq_t),
       .icache_arsp_t(icache_arsp_t),
       .icache_dreq_t(icache_dreq_t),
@@ -136,6 +137,7 @@ module wt_cache_subsystem
   ) i_cva6_icache (
       .clk_i         (clk_i),
       .rst_ni        (rst_ni),
+      .chip_id_i     (chip_id_i),
       .flush_i       (icache_flush_i),
       .en_i          (icache_en_i),
       .miss_o        (icache_miss_o),

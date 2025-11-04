@@ -287,6 +287,7 @@ module cva6_hpdcache_subsystem
   cva6_hpdcache_wrapper #(
       .CVA6Cfg(CVA6Cfg),
       .HPDcacheCfg(HPDcacheCfg),
+      .chip_id_t(chip_id_t),
       .dcache_req_i_t(dcache_req_i_t),
       .dcache_req_o_t(dcache_req_o_t),
       .NumPorts(NumPorts),
@@ -315,6 +316,7 @@ module cva6_hpdcache_subsystem
   ) i_dcache (
       .clk_i(clk_i),
       .rst_ni(rst_ni),
+      .chip_id_i(chip_id_i),
       .dcache_enable_i(dcache_enable_i),
       .dcache_flush_i(dcache_flush_i),
       .dcache_flush_ack_o(dcache_flush_ack_o),

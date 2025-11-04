@@ -14,6 +14,7 @@ module cva6_hpdcache_if_adapter
 //  {{{
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t = logic,
     parameter hpdcache_pkg::hpdcache_cfg_t HPDcacheCfg = '0,
     parameter type hpdcache_tag_t = logic,
     parameter type hpdcache_req_offset_t = logic,
@@ -33,7 +34,7 @@ module cva6_hpdcache_if_adapter
     //  Clock and active-low reset pins
     input logic clk_i,
     input logic rst_ni,
-
+    input chip_id_t chip_id_i,
     //  Port ID
     input hpdcache_req_sid_t hpdcache_req_sid_i,
 
@@ -216,7 +217,8 @@ module cva6_hpdcache_if_adapter
             {64 - CVA6Cfg.DCACHE_TAG_WIDTH{1'b0}}
             , hpdcache_req.addr_tag,
             {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}
-          }
+          },
+          chip_id_i
       );
 
       assign amo_is_word = (cva6_amo_req_i.size == 2'b10);

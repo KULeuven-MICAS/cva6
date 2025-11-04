@@ -513,9 +513,9 @@ package cva6_config_pkg;
   localparam CVA6ConfigAxiAddrWidth = 48;
   localparam CVA6ConfigAxiDataWidth = 64;
   localparam CVA6ConfigFetchUserEn  = 0;
-  localparam CVA6ConfigFetchUserWidth = 1;  // Just not to raise warnings
+  localparam CVA6ConfigFetchUserWidth = CVA6ConfigXlen;
   localparam CVA6ConfigDataUserEn = 0;
-  localparam CVA6ConfigDataUserWidth = 1;
+  localparam CVA6ConfigDataUserWidth = CVA6ConfigXlen;
 
   localparam CVA6ConfigIcacheByteSize = 4096;
   localparam CVA6ConfigIcacheSetAssoc = 4;

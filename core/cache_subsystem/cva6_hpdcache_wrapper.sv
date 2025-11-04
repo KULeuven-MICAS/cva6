@@ -18,6 +18,7 @@ module cva6_hpdcache_wrapper
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
     parameter hpdcache_pkg::hpdcache_cfg_t HPDcacheCfg = '0,
+    parameter type chip_id_t = logic,
     parameter type dcache_req_i_t = logic,
     parameter type dcache_req_o_t = logic,
     parameter int NumPorts = 4,
@@ -55,7 +56,8 @@ module cva6_hpdcache_wrapper
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
-
+    // Chip ID - SUBSYSTEM
+    input chip_id_t chip_id_i,
     //  D$
     //  {{{
     //    Cache management
@@ -148,6 +150,7 @@ module cva6_hpdcache_wrapper
       cva6_hpdcache_if_adapter #(
           .CVA6Cfg              (CVA6Cfg),
           .HPDcacheCfg          (HPDcacheCfg),
+          .chip_id_t            (chip_id_t),
           .hpdcache_tag_t       (hpdcache_tag_t),
           .hpdcache_req_offset_t(hpdcache_req_offset_t),
           .hpdcache_req_sid_t   (hpdcache_req_sid_t),
@@ -160,7 +163,7 @@ module cva6_hpdcache_wrapper
       ) i_cva6_hpdcache_load_if_adapter (
           .clk_i,
           .rst_ni,
-
+          .chip_id_i         (chip_id_i),
           .hpdcache_req_sid_i(hpdcache_req_sid_t'(r)),
 
           .cva6_req_i     (dcache_req_ports[r]),

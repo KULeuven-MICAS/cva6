@@ -1180,6 +1180,7 @@ module cva6
   // ---------
   csr_regfile #(
       .CVA6Cfg           (CVA6Cfg),
+      .chip_id_t         (chip_id_t),
       .exception_t       (exception_t),
       .jvt_t             (jvt_t),
       .irq_ctrl_t        (irq_ctrl_t),
@@ -1189,6 +1190,7 @@ module cva6
   ) csr_regfile_i (
       .clk_i,
       .rst_ni,
+      .chip_id_i,
       .time_irq_i,
       .flush_o                 (flush_csr_ctrl),
       .halt_csr_o              (halt_csr_ctrl),

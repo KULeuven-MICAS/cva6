@@ -488,10 +488,9 @@ package cva6_config_pkg;
   localparam CVA6ConfigXlen = 64;
 
   localparam CVA6ConfigNrCommitPorts = 2;
-  // We do not need the FPU in CVA6, the FPU is offloaded to the Ara
-  localparam CVA6ConfigRVF = 0;
+  localparam CVA6ConfigRVF = 1;      // Support single-precision FP
   localparam CVA6ConfigRVD = 0;
-  localparam CVA6ConfigF16En = 0;
+  localparam CVA6ConfigF16En = 1;    // Support FP16 for gemm
   localparam CVA6ConfigF16AltEn = 0;
   localparam CVA6ConfigF8En = 0;
   localparam CVA6ConfigF8AltEn = 0;

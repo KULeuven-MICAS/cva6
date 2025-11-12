@@ -17,6 +17,7 @@ module csr_regfile
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg            = config_pkg::cva6_cfg_empty,
+    parameter type                   chip_id_t          = logic,
     parameter type                   exception_t        = logic,
     parameter type                   jvt_t              = logic,
     parameter type                   irq_ctrl_t         = logic,
@@ -29,6 +30,8 @@ module csr_regfile
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
+    //
+    input chip_id_t chip_id_i,
     // Timer threw a interrupt - SUBSYSTEM
     input logic time_irq_i,
     // send a flush request out when a CSR with a side effect changes - CONTROLLER
@@ -682,6 +685,7 @@ module csr_regfile
         riscv::CSR_MARCHID: csr_rdata = {{CVA6Cfg.XLEN - 32{1'b0}}, ARIANE_MARCHID};
         riscv::CSR_MIMPID: csr_rdata = '0;  // not implemented
         riscv::CSR_MHARTID: csr_rdata = hart_id_i;
+        riscv::CSR_MCHIPID: csr_rdata = {{(CVA6Cfg.XLEN-8){1'b0}}, chip_id_i};
         riscv::CSR_MCONFIGPTR: csr_rdata = '0;  // not implemented
         riscv::CSR_MCOUNTINHIBIT:
         csr_rdata = {{(CVA6Cfg.XLEN - (MHPMCounterNum + 3)) {1'b0}}, mcountinhibit_q};

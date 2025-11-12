@@ -85,7 +85,8 @@ module cva6_hpdcache_if_adapter
             {64 - CVA6Cfg.DCACHE_TAG_WIDTH{1'b0}}
             , cva6_req_i.address_tag
             , {CVA6Cfg.DCACHE_INDEX_WIDTH{1'b0}}
-          }
+          },
+          chip_id_i
       );
 
       //    Request forwarding

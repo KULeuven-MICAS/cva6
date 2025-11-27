@@ -34,9 +34,9 @@
 [submodule "corev_apu/tb/common_verification"]
 	path = corev_apu/tb/common_verification
 	url = https://github.com/pulp-platform/common_verification.git
-[submodule "verif/core-v-verif"]
-	path = verif/core-v-verif
-	url = https://github.com/openhwgroup/core-v-verif
+#[submodule "verif/core-v-verif"]
+#	path = verif/core-v-verif
+#	url = https://github.com/openhwgroup/core-v-verif
 [submodule "core/cvfpu"]
 	path = core/cvfpu
 	url = https://github.com/pulp-platform/cvfpu.git
@@ -44,12 +44,12 @@
 [submodule "core/cache_subsystem/hpdcache"]
 	path = core/cache_subsystem/hpdcache
 	url = https://github.com/openhwgroup/cv-hpdcache.git
-[submodule "verif/sim/dv"]
-	path = verif/sim/dv
-	url = https://github.com/google/riscv-dv.git
-[submodule "docs/06_cv32a65x_riscv/riscv-isa-manual"]
-	path = docs/riscv-isa/riscv-isa-manual
-	url = https://github.com/riscv/riscv-isa-manual.git
+#[submodule "verif/sim/dv"]
+#	path = verif/sim/dv
+#	url = https://github.com/google/riscv-dv.git
+#[submodule "docs/06_cv32a65x_riscv/riscv-isa-manual"]
+#	path = docs/riscv-isa/riscv-isa-manual
+#	url = https://github.com/riscv/riscv-isa-manual.git
 [submodule "corev_apu/fpga/src/apb"]
 	path = corev_apu/fpga/src/apb
 	url = https://github.com/pulp-platform/apb.git

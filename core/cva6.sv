@@ -712,6 +712,7 @@ module cva6
   // --------------
   frontend #(
       .CVA6Cfg(CVA6Cfg),
+      .chip_id_t(chip_id_t),
       .bp_resolve_t(bp_resolve_t),
       .fetch_entry_t(fetch_entry_t),
       .icache_dreq_t(icache_dreq_t),
@@ -719,6 +720,7 @@ module cva6
   ) i_frontend (
       .clk_i,
       .rst_ni             (rst_uarch_n),
+      .chip_id_i          (chip_id_i),
       .boot_addr_i        (rst_addr_ctrl_if),
       .flush_bp_i         (1'b0),
       .flush_i            (flush_ctrl_if),                  // not entirely correct

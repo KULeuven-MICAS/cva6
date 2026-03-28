@@ -19,6 +19,7 @@ module frontend
   import ariane_pkg::*;
 #(
     parameter config_pkg::cva6_cfg_t CVA6Cfg = config_pkg::cva6_cfg_empty,
+    parameter type chip_id_t = logic,
     parameter type bp_resolve_t = logic,
     parameter type fetch_entry_t = logic,
     parameter type icache_dreq_t = logic,
@@ -28,6 +29,8 @@ module frontend
     input logic clk_i,
     // Asynchronous reset active low - SUBSYSTEM
     input logic rst_ni,
+    // Chip ID for multi-chiplet debug address computation - SUBSYSTEM
+    input chip_id_t chip_id_i,
     // Next PC when reset - SUBSYSTEM
     input logic [CVA6Cfg.VLEN-1:0] boot_addr_i,
     // Flush branch prediction - zero
@@ -408,9 +411,12 @@ module frontend
       npc_d = pc_commit_i + (halt_i ? '0 : {{CVA6Cfg.VLEN - 3{1'b0}}, 3'b100});
     end
     // 7. Debug
-    // enter debug on a hard-coded base-address
+    // enter debug on a chip_id-based base-address (debug module is at {chip_id, 40'h0})
     if (CVA6Cfg.DebugEn && set_debug_pc_i)
-      npc_d = CVA6Cfg.DmBaseAddress[CVA6Cfg.VLEN-1:0] + CVA6Cfg.HaltAddress[CVA6Cfg.VLEN-1:0];
+      npc_d = {{(CVA6Cfg.VLEN - config_pkg::LocalAddressWidth - config_pkg::ChipIdWidth){1'b0}},
+               chip_id_i,
+               {config_pkg::LocalAddressWidth{1'b0}}}
+            + CVA6Cfg.HaltAddress[CVA6Cfg.VLEN-1:0];
     icache_dreq_o.vaddr = fetch_address;
   end
 

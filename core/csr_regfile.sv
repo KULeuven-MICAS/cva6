@@ -2666,9 +2666,12 @@ module csr_regfile
       end
     end
 
-    // if we are in debug mode jump to a specific address
+    // if we are in debug mode jump to a chip_id-based debug address
     if (CVA6Cfg.DebugEn && debug_mode_q) begin
-      trap_vector_base_o = CVA6Cfg.DmBaseAddress[CVA6Cfg.VLEN-1:0] + CVA6Cfg.ExceptionAddress[CVA6Cfg.VLEN-1:0];
+      trap_vector_base_o = {{(CVA6Cfg.VLEN - config_pkg::LocalAddressWidth - config_pkg::ChipIdWidth){1'b0}},
+                             chip_id_i,
+                             {config_pkg::LocalAddressWidth{1'b0}}}
+                          + CVA6Cfg.ExceptionAddress[CVA6Cfg.VLEN-1:0];
     end
 
     // check if we are in vectored mode, if yes then do BASE + 4 * cause we
